@@ -35,14 +35,14 @@ To read RF structures, it's easiest when the generators of the canonical form ar
     [x2 * x1, (x1 + 1) * x0, (x2 + 1) * (x1 + 1), x2 * x0]
     
 Or we can simply retrive the RF structure::
-    sage: code.get_canonical_RF_structure()
+    sage: code.canonical_RF_structure()
     Intersection of U_['2', '1'] is empty
     Intersection of U_['0'] is a subset of Union of U_['1']
     X = Union of U_['2', '1']
     Intersection of U_['2', '0'] is empty
     
 We can investigate the groebner basis of the neural code::
-    sage: code.get_groebner_basis()
+    sage: code.groebner_basis()
     Ideal (x0*x2, x1 + x2 + 1) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
 
 Other methods include determining if a neural code is a simplicial code::
@@ -53,15 +53,15 @@ Other methods include determining if a neural code is a simplicial code::
     True
     
 Computing the groebner fan in the boolean ring::
-    sage: code.get_groebner_fan()
+    sage: code.groebner_fan()
     [Ideal (x1 + x2 + 1, x0*x1 + x0) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2, Ideal (x1 + x2 + 1, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite     Field of size 2]
     
 Computing the universal groebner basis in the boolean ring::
-    sage: code.get_universal_groebner_basis()
+    sage: code.universal_groebner_basis()
     Ideal (x1 + x2 + 1, x0*x1 + x0, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
     
 In constructing a neural code object, there are two arguments: the neural code, and an optional argument that is the term order. This term order will be used in the ring where
-all member methods do computation. For example, if we change the order to 'degrevlex', get_groebner_basis() will compute the groebner basis with that term order. 
+all member methods do computation. For example, if we change the order to 'degrevlex', groebner_basis() will compute the groebner basis with that term order. 
 
 Additionally, the canonical() method also takes optional arguments. The first will determine which algorithm will be used to compute the canonical form. Either the iterative algorithm outlined by Dr. Carina Curto and Dr. Nora Young in "Neural ring homomorphisms and maps between neural codes" will be used or their algorithm in "The Neural Ring" will be chosen. The second will determine which algorithm to use for a primary decomposition step: 'pm' will use the pseudo-monomial algorithm, 'sy' and 'gtz' will  use the shimoyama-yokoyama algorithm or gianni-trager-zacharias algorithm, respectively. We also noticed that the canonical() runtime begins to rise significantly with higher dimension and more code words. To partially address this, we have parallelized portions of the algorithm used to get the canonical form. To take advantage of this, we use optional arguments::
     sage: code.canonical('pm', True, 3)
@@ -117,7 +117,7 @@ Building upon that, generate_random_tests(number of tests, dimension) will run "
     ['011', '111', '110']                             |[x1 + 1, (x2 + 1) * (x0 + 1)]                                                   |[x1 + 1, (x2 + 1) * (x0 + 1)]
     
 Now, all of these tests use a method called compare_groebner_canonical(gb, cf) which will return a list where the first element is a boolean indicating whether the groebner basis and canonical form equal::
-    sage: gb = code.get_groebner_basis()
+    sage: gb = code.groebner_basis()
     sage: cf = code.canonical()
     sage: compare_groebner_canonical(gb, cf)
     [False, {x1 + x2 + 1, x0*x2}, {x1*x2, x0*x1 + x0, x1*x2 + x1 + x2 + 1, x0*x2}]
@@ -219,7 +219,7 @@ class NeuralCode:
             if C[i] in self.V:
                 self.V.remove(C[i])
     
-    def get_neural_ideal(self):
+    def neural_ideal(self):
         r"""
         Fetches the neural ideal.
 
@@ -234,12 +234,12 @@ class NeuralCode:
         EXAMPLES:
 
             sage: neural_code = NeuralCode(['000','011'])
-            sage: neural_code.get_neural_ideal()
+            sage: neural_code.neural_ideal()
                   Ideal (x0*x1*x2 + x0*x2 + x1*x2 + x2, x0*x1*x2 + x0*x1 + x1*x2 + x1, x0*x1*x2 + x0*x1 + x0*x2 + x0, x0*x1*x2 + x0*x2, x0*x1*x2 + x0*x1, x0*x1*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
         TESTS:
 
         >>> neural_code = NeuralCode(['000','011'])
-        >>> neural_code.get_neural_ideal()
+        >>> neural_code.neural_ideal()
         Ideal (x0*x1*x2 + x0*x2 + x1*x2 + x2, x0*x1*x2 + x0*x1 + x1*x2 + x1, x0*x1*x2 + x0*x1 + x0*x2 + x0, x0*x1*x2 + x0*x2, x0*x1*x2 + x0*x1, x0*x1*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
         """
         # rho will represent the collection of rho of v that will generate the ideal
@@ -256,7 +256,7 @@ class NeuralCode:
             rho.append(product)                                                   
         return self.F.ideal(rho)
         
-    def _get_decomposition_product(self, decomp):
+    def _decomposition_product(self, decomp):
         r"""
         Computes the cartesian product of the ideals in the primary decomposition of the neural ideal.
 
@@ -274,7 +274,7 @@ class NeuralCode:
         
         return product
         
-    def get_groebner_fan(self):
+    def groebner_fan(self):
         r"""
         Returns the groebner fan, reduced to the Boolean Ring.
 
@@ -288,20 +288,20 @@ class NeuralCode:
 
         EXAMPLES:
             sage: nc = NeuralCode(['00','01'])
-            sage: nc.get_groebner_fan()
+            sage: nc.groebner_fan()
             [Ideal (x0) of Multivariate Polynomial Ring in x0, x1 over Finite Field of size 2]
 
         TESTS:
 
         >>> nc = NeuralCode(['00','01'])
-        >>> nc.get_groebner_fan()
+        >>> nc.groebner_fan()
         [Ideal (x0) of Multivariate Polynomial Ring in x0, x1 over Finite Field of size 2]
 
         """
         if len(self.Codes) == 2 ** self.d:
             return [0]
         
-        gf = self.get_neural_ideal().groebner_fan()
+        gf = self.neural_ideal().groebner_fan()
         
         original_bases = gf.reduced_groebner_bases()
         
@@ -322,7 +322,7 @@ class NeuralCode:
             reduced_bases[i] = self.F.ideal(reduced_bases[i])
         return Set(reduced_bases).list()
         
-    def get_universal_groebner_basis(self):
+    def universal_groebner_basis(self):
         r"""
         Returns the universal groebner basis.
         
@@ -340,20 +340,20 @@ class NeuralCode:
         EXAMPLES:
 
             sage: nc = NeuralCode(['001','010','110','001'])
-            sage: nc.get_universal_groebner_basis()
+            sage: nc.universal_groebner_basis()
             Ideal (x1 + x2 + 1, x0*x1 + x0, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
 
         TESTS:
 
         >>> nc = NeuralCode(['001','010','110','001'])
-        >>> nc.get_universal_groebner_basis()
+        >>> nc.universal_groebner_basis()
         Ideal (x1 + x2 + 1, x0*x1 + x0, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
 
         """
         if len(self.Codes) == 2 ** self.d:
             return [0]
         
-        gf = self.get_neural_ideal().groebner_fan()
+        gf = self.neural_ideal().groebner_fan()
         
         original_bases = gf.reduced_groebner_bases()
         
@@ -492,7 +492,7 @@ class NeuralCode:
         else:
             # condition for when Groebner = Canonical
             if len(self.Codes) == 1 or len(self.Codes) == (2**self.d - 1) or is_simplicial(self.Codes):
-                return self.get_groebner_basis()
+                return self.groebner_basis()
 
             # calculates an ideal in the traditional way, using the union of varieties
             if (len(self.Codes) == 2 ** self.d):
@@ -501,7 +501,7 @@ class NeuralCode:
             if self.d >= 8 and len(self.Codes) < 2**(self.d - 2):
                 j_c = self.traditional_neural_ideal()
             else:
-                j_c = self.get_neural_ideal()
+                j_c = self.neural_ideal()
 
             # recover the primary decomposition of the ideal J
             if (decomposition_algorithm == "pm"):
@@ -513,7 +513,7 @@ class NeuralCode:
             decomp = self._parse_decomposition(primes)
 
             # compute the product of the decomposition ideals
-            M = self._get_decomposition_product(decomp)
+            M = self._decomposition_product(decomp)
 
             ########## Method using threading #########
             if threading:
@@ -603,9 +603,9 @@ class NeuralCode:
                 else:
                     ideal.append(self.x[j])
             poly.append(self.F.ideal(ideal))
-        return self._get_decomposition_product(poly)
+        return self._decomposition_product(poly)
         
-    def _get_sigma_tau(self):
+    def _sigma_tau(self):
         r"""Returns the sets sigma and tau, where sigma is the list of Receptive Field sets whose intersections are subsets of the union of the Receptive Field sets in Tau."""
         list = self.factored_canonical()
         
@@ -631,7 +631,7 @@ class NeuralCode:
             all_tau.append(tau)
         return (all_sigma , all_tau)
         
-    def get_groebner_basis(self):
+    def groebner_basis(self):
         r"""
         Returns the groebner basis of the neural ideal using the libsingular:std algorithm.
 
@@ -646,18 +646,18 @@ class NeuralCode:
         EXAMPLES:
             sage: C = ['01010','11100','11110','01011']
             sage: nr = NeuralCode(C)
-            sage: nr.get_groebner_basis()
+            sage: nr.groebner_basis()
             Ideal (x0 + x2, x1 + 1, x2*x3 + x2 + x3 + 1, x2*x4, x3*x4 + x4) of Multivariate Polynomial Ring in x0, x1, x2, x3, x4 over Finite Field of size 2
 
         TESTS:
 
         >>> C = ['01010','11100','11110','01011']
         >>> nr = NeuralCode(C)
-        >>> nr.get_groebner_basis()
+        >>> nr.groebner_basis()
         Ideal (x0 + x2, x1 + 1, x2*x3 + x2 + x3 + 1, x2*x4, x3*x4 + x4) of Multivariate Polynomial Ring in x0, x1, x2, x3, x4 over Finite Field of size 2
 
         """
-        ni = self.get_neural_ideal()
+        ni = self.neural_ideal()
         
         gb = ni.groebner_basis(algorithm='libsingular:std')
         
@@ -672,7 +672,7 @@ class NeuralCode:
         
         return self.F.ideal(reduced)
 
-    def get_canonical_RF_structure(self):
+    def canonical_RF_structure(self):
         r"""
         Prints the Receptive Field structure using the canonical form of the neural ideal.
 
@@ -687,18 +687,18 @@ class NeuralCode:
         EXAMPLES:
             sage: C = ['110','100','000','010']
             sage: nr = NeuralCode(C)
-            sage: nr.get_canonical_RF_structure()
+            sage: nr.canonical_RF_structure()
             Intersection of U_['2'] is empty
 
         TESTS:
 
         >>> C = ['110','100','000','010']
         >>> nr = NeuralCode(C)
-        >>> nr.get_canonical_RF_structure()
+        >>> nr.canonical_RF_structure()
         Intersection of U_['2'] is empty
 
         """
-        list = self._get_sigma_tau()
+        list = self._sigma_tau()
         
         if (list == "Empty"):
             print "Zero ideal : Empty"
@@ -919,17 +919,17 @@ def pm_primary_decomposition(IDEAL):
     
     #step 5 recursion step (which is a loop of steps 2-4)
     while D <> []:
-        [D, Q] = get_D_Q(D, Q)
+        [D, Q] = D_Q(D, Q)
     
     #step 6 final step
     P = list(set(Q))
     for m in range(len(P)):
-        final.extend(get_reduced_primes_list(P, m))
+        final.extend(reduced_primes_list(P, m))
     return final
 
 
 #Step 6: If one ideal contains the generators of another ideal in the list, then it is redundant since we are taking the intersection of these ideals. This command gets a list of the non redundant ideals
-def get_reduced_primes_list(P, m):
+def reduced_primes_list(P, m):
     plist = []
     contains = False
     for n in range(len(P)):
@@ -951,7 +951,7 @@ def get_reduced_primes_list(P, m):
 
 
 #steps 2-4
-def get_D_Q(D, Q):
+def D_Q(D, Q):
     new_D = []
     
     #creating D_I
@@ -975,7 +975,7 @@ def get_D_Q(D, Q):
         #step 3
         for i in range(len(gen_fac_list)):
             z = gen_fac_list[i]
-            D_I.append(get_reduced_ideal(z, I))
+            D_I.append(reduced_ideal(z, I))
         new_D.extend(D_I)
     
     #step 4
@@ -1002,7 +1002,7 @@ def is_linear(ideal):
 
 
 #executes the reduction in step 3 for a given ideal and given z
-def get_reduced_ideal(z, I):
+def reduced_ideal(z, I):
     L = []
     M = []
     N = []
