@@ -26,11 +26,7 @@ AUTHORS:
 
 - Rebecca Garcia (2016-09-20): v2.0
 
-- Anne Shiu (2016-09-20): v2.0
-
-- Jessia Liu (2016-09-20): v2.0
-
-- Kaitlyn Phillipson (2016-09-20): v2.0
+- Nora Youngs (2016-09-20): v2.0
 
 EXAMPLES::
 
