@@ -22,6 +22,16 @@ AUTHORS:
 
 - Ihmar Aldana (2015-09-13): initial version
 
+- Luis Garcia-Puente (2016-09-20): v2.0
+
+- Rebecca Garcia (2016-09-20): v2.0
+
+- Anne Shiu (2016-09-20): v2.0
+
+- Jessia Liu (2016-09-20): v2.0
+
+- Kaitlyn Phillipson (2016-09-20): v2.0
+
 EXAMPLES::
 
 The software's main purpose is to compute canonical forms of neural ideals, and we'll begin with this example::
@@ -41,24 +51,12 @@ Or we can simply retrive the RF structure::
     X = Union of U_['2', '1']
     Intersection of U_['2', '0'] is empty
     
-We can investigate the groebner basis of the neural code::
-    sage: code.groebner_basis()
-    Ideal (x0*x2, x1 + x2 + 1) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
-
 Other methods include determining if a neural code is a simplicial code::
     sage: is_simplicial(code.Codes)
     False
     
     sage: is_simplicial(['000','001','010','100','110','011','101','111'])
     True
-    
-Computing the groebner fan in the boolean ring::
-    sage: code.groebner_fan()
-    [Ideal (x1 + x2 + 1, x0*x1 + x0) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2, Ideal (x1 + x2 + 1, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite     Field of size 2]
-    
-Computing the universal groebner basis in the boolean ring::
-    sage: code.universal_groebner_basis()
-    Ideal (x1 + x2 + 1, x0*x1 + x0, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
     
 In constructing a neural code object, there are two arguments: the neural code, and an optional argument that is the term order. This term order will be used in the ring where
 all member methods do computation. For example, if we change the order to 'degrevlex', groebner_basis() will compute the groebner basis with that term order. 
@@ -67,66 +65,17 @@ Additionally, the canonical() method also takes optional arguments. The first wi
     sage: code.canonical('pm', True, 3)
     Ideal (x1*x2, x0*x1 + x0, x1*x2 + x1 + x2 + 1, x0*x2) of Multivariate Polynomial Ring in x0, x1, x2 over Finite Field of size 2
     
-The second argument is a boolean: True if we want to use parallelized portions, False if we don't. The third argument is for the number of parallel processes.
-There are several other functions specifically designed for research in the neural ring. First, compare_all_groebner_canonical(d) will print a comparison of all of the groebner bases and canonical forms for every possible set of codewords in "d" dimension, except for when the canonical form
-is the zero ideal::
-    sage: compare_all_groebner_canonical(2)
-    Differences: 2 Equal bases: 12
+The second argument is a boolean: True if we want to use parallelized portions, False if we don't. The third argument is for the number of parallel processes. There other commands that are useful for exploring neural codes:
 
-    Different Bases:
-
-    Codes                                             |Groebner                                                                   |Canonical
-    ['00', '11']                                      |[x0 + x1]                                                                  |[(x1 + 1) * x0, x1 * (x0 + 1)]
-    ['01', '10']                                      |[x0 + x1 + 1]                                                              |[(x1 + 1) * (x0 + 1), x1 * x0]
-
-    Equal Bases:
-
-    Codes                                             |Groebner                                                                        |Canonical
-    ['00']                                            |[x1, x0]                                                                        |[x0, x1]
-    ['01']                                            |[x0, x1 + 1]                                                                    |[x0, x1 + 1]
-    ['10']                                            |[x1, x0 + 1]                                                                    |[x0 + 1, x1]
-    ['11']                                            |[x1 + 1, x0 + 1]                                                                |[x0 + 1, x1 + 1]
-    ['00', '01']                                      |[x0]                                                                            |[x0]
-    ['00', '10']                                      |[x1]                                                                            |[x1]
-    ['01', '11']                                      |[x1 + 1]                                                                        |[x1 + 1]
-    ['10', '11']                                      |[x0 + 1]                                                                        |[x0 + 1]
-    ['00', '01', '10']                                |[x1 * x0]                                                                       |[x1 * x0]
-    ['00', '01', '11']                                |[(x1 + 1) * x0]                                                                 |[(x1 + 1) * x0]
-    ['00', '10', '11']                                |[x1 * (x0 + 1)]                                                                 |[x1 * (x0 + 1)]
-    ['01', '10', '11']                                |[(x1 + 1) * (x0 + 1)]                                                           |[(x1 + 1) * (x0 + 1)]
-
-Next, generate_random_code(d) will generate a random list of codewords in "d" dimension. This is very useful for generating examples to test conjectures::
+1. generate_random_code(d) will generate a random list of codewords in "d" dimension. This is very useful for generating examples to test conjectures::
     sage: generate_random_code(7)
     ['0001101', '1001001', '0011110', '1011101', '0001011', '0011011', '1111101', '0000010', '1011001', '0000001', '1110101', '0100110', '0000101', '0111100', '0100000', '0100011', '0010001',         '1111010', '1101010', '0101011', '1000001', '1100100', '1100110']
     
-Building upon that, generate_random_tests(number of tests, dimension) will run "number of tests" amount of comparisons between groebner bases and canonical forms in the specified dimension::
-    sage: generate_random_tests(5, 3)
-    Differences: 1 Equal bases: 4
-
-    Different Bases:
-
-    Codes                                             |Groebner                                                                        |Canonical
-    ['010', '001', '000', '111', '101']               |[(x2 + 1) * x0, x1 * (x0 + x2)]                                                 |[x2 * x1 * (x0 + 1), (x2 + 1) * x0]
-
-    Equal Bases:
-
-    Codes                                             |Groebner                                                                        |Canonical
-    ['111']                                           |[x2 + 1, x1 + 1, x0 + 1]                                                        |[x0 + 1, x1 + 1, x2 + 1]
-    ['000']                                           |[x2, x1, x0]                                                                    |[x0, x1, x2]
-    ['001']                                           |[x2 + 1, x0, x1]                                                                |[x0, x1, x2 + 1]
-    ['011', '111', '110']                             |[x1 + 1, (x2 + 1) * (x0 + 1)]                                                   |[x1 + 1, (x2 + 1) * (x0 + 1)]
-    
-Now, all of these tests use a method called compare_groebner_canonical(gb, cf) which will return a list where the first element is a boolean indicating whether the groebner basis and canonical form equal::
-    sage: gb = code.groebner_basis()
-    sage: cf = code.canonical()
-    sage: compare_groebner_canonical(gb, cf)
-    [False, {x1 + x2 + 1, x0*x2}, {x1*x2, x0*x1 + x0, x1*x2 + x1 + x2 + 1, x0*x2}]
-    
-Another useful method is all_neural_codes(d), which will return a list of all of the possible sets of code words in the specified dimension:
+2. all_neural_codes(d), which will return a list of all of the possible sets of code words in the specified dimension:
     sage: all_neural_codes(2)
     [[], ['00'], ['01'], ['10'], ['11'], ['00', '01'], ['00', '10'], ['00', '11'], ['01', '10'], ['01', '11'], ['10', '11'], ['00', '01', '10'], ['00', '01', '11'], ['00', '10', '11'], ['01',         '10', '11'], ['00', '01', '10', '11']]
     
-Used in is_simplicial(C), support(C) will return the support of a single codeword::
+3. support(C) will return the support of a single codeword::
     sage: support('0100011110101')
     [1, 5, 6, 7, 8, 10, 12]
 
@@ -134,7 +83,7 @@ There is also a test suite, assert_build(), which tests whether canonical() will
 """
 
 #*****************************************************************************
-#       Copyright (C) 2013 YOUR NAME <your email>
+#       Copyright (C) 2013 Ethan Petersen <peterseo@rose-hulman.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
