@@ -8,25 +8,33 @@ from sage.rings.polynomial import *
 from sage.rings.polynomial.pbori import *
 from sage.rings.ideal import *
 r"""
-Collection of algorithms pertaining to the neural ring.
+Neural Ideals in SageMath: A package to perform computations with neural ideals associated to neural codes.
 
-The following is based around implementations of two algorithms described in the paper, "The Neural Ring: An Algebraic Tool for Analyzing the Intrinsic Structure of Neural Codes" by Curto, C., Itskov, V., Veliz-Cuba, A., and Youngs, N. The first is a primary decomposition of pseudo-monomials, which is used in the second algorithm that computes a canonical form. Along with these are several other methods that are related to neural codes or neural ideals. Additionally, the iterative algorithm to compute the canonical form outlined in "Neural ring homomorphisms and maps between neural codes" by Dr. Carina Curto and Dr. Nora Youngs has also been implemented. 
+A major area in neuroscience research is the study of how the brain processes spatial information. Neurons in the brain represent external stimuli via neural codes. The neural ideal is an algebraic object that encodes the full combinatorial data of a neural code. This ideal can be expressed in a canonical form that directly translates to a minimal description of the receptive field structure intrinsic to the code. In this package we implement a novel and efficient algorithm to compute the canonical form of a neural ideal.  Moreover, our package contains implementations of several other methods related to the neural ideal of a code, 
+including an algorithm to compute the primary decomposition of a pseudo-monomial ideal. These implementations are based on algorithms described in the following papers:
+
+1. Curto, C., Itskov, V., Veliz-Cuba, A., Youngs, N. The Neural Ring: An Algebraic Tool for Analyzing the Intrinsic Structure of Neural Codes. Bulletin of Mathematical Biology, Volume 75, Issue 9, pp. 1571-111, 2013.
+
+2. Ethan Petersen, Nora Youngs, Ryan Kruse, Dane Miyata, Rebecca
+  Garcia, Luis David  Garcia Puente. Neural Ideals in SageMath. Submitted. 2016.
 
 AUTHORS:
 
 - Ethan Petersen (2015-09-13): initial version
 
-- Dane Miyata (2015-09-13): initial version
+- Nora Youngs (2016-09-20): v2.0
 
 - Ryan Kruse (2015-09-13): initial version
 
-- Ihmar Aldana (2015-09-13): initial version
-
-- Luis Garcia-Puente (2016-09-20): v2.0
+- Dane Miyata (2015-09-13): initial version
 
 - Rebecca Garcia (2016-09-20): v2.0
 
-- Nora Youngs (2016-09-20): v2.0
+- Luis David Garcia Puente (2016-09-20): v2.0
+
+OTHER CONTRIBUTORS:
+
+- Ihmar Aldana (2015-09-13): initial version
 
 EXAMPLES::
 
